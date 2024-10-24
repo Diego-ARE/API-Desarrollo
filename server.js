@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 app.post('/send-email', async (req, res) => {
     try {
         // Imprimir el JSON que recibe el servidor
-        console.log('JSON recibido:', req.body);
+    //    console.log('JSON recibido:', req.body);
 
         const { personalizations, from, content } = req.body;
 
@@ -41,7 +41,7 @@ app.post('/send-email', async (req, res) => {
         };
 
         // Imprimir el JSON que se va a enviar a SendGrid
-        console.log('Datos del correo que se enviarán:', JSON.stringify(emailData, null, 2));
+    //    console.log('Datos del correo que se enviarán:', JSON.stringify(emailData, null, 2));
 
         const response = await axios.post('https://api.sendgrid.com/v3/mail/send', emailData, {
             headers: {
