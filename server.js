@@ -11,8 +11,10 @@ app.use(bodyParser.json());
 
 app.post('/send-email', async (req, res) => {
     try {
+        // Imprimir el JSON que recibe el servidor
+        console.log('JSON recibido:', req.body);
+
         const { personalizations, from, content } = req.body;
-        console.log(JSON.stringify(body, null, 2));
 
         // Verifica que los datos requeridos estén presentes
         if (!personalizations || !from || !content) {
@@ -38,8 +40,8 @@ app.post('/send-email', async (req, res) => {
             content: content,
         };
 
-        // Log para depuración
-        console.log('Datos del correo que se enviarán:', emailData);
+        // Imprimir el JSON que se va a enviar a SendGrid
+        console.log('Datos del correo que se enviarán:', JSON.stringify(emailData, null, 2));
 
         const response = await axios.post('https://api.sendgrid.com/v3/mail/send', emailData, {
             headers: {
@@ -51,7 +53,9 @@ app.post('/send-email', async (req, res) => {
         res.status(response.status).send(response.data);
     } catch (error) {
         console.error('Error al enviar el correo:', error);
-        res.status(500).send({ message: 'Error al enviar el correo', error: error.message });
+        // Mejor manejo de errores
+        const errorMessage = error.response ? error.response.data : error.message || 'Error desconocido';
+        res.status(500).send({ message: 'Error al enviar el correo', error: errorMessage });
     }
 });
 
