@@ -13,26 +13,36 @@ app.post('/send-email', async (req, res) => {
     try {
         const { name, email, subject, message } = req.body;
 
-        // Validación básica
+        // Verifica que los datos requeridos estén presentes
         if (!name || !email || !subject || !message) {
-            return res.status(400).send({ message: 'Todos los campos son requeridos.' });
+            return res.status(400).send({ message: 'Faltan datos requeridos' });
         }
 
         const emailData = {
             personalizations: [
                 {
-                    to: [{ email: 'darevaloh1@miumg.edu' }],
+                    to: [{ email: 'darevaloh1@miumg.edu.gt' }],
                     subject: `Nuevo caso de contacto: ${subject}`,
                 },
             ],
-            from: { email: email },
+            from: { 
+                email: email, 
+                name: name // Agregar el nombre del remitente aquí
+            },
             content: [
                 {
                     type: 'text/plain',
-                    value: message,
+                    value: message, // Mensaje del contacto
                 },
+                {
+                    type: 'text/html', // Agrega un bloque de contenido en formato HTML (opcional)
+                    value: `<p>${message}</p>`
+                }
             ],
         };
+
+        // Log para depuración
+        console.log('Datos del correo que se enviarán:', emailData);
 
         const response = await axios.post('https://api.sendgrid.com/v3/mail/send', emailData, {
             headers: {
