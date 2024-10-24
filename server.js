@@ -16,7 +16,7 @@ app.post('/send-email', async (req, res) => {
         const emailData = {
             personalizations: [
                 {
-                    to: [{ email: 'darevaloh1@miumg.edu' }],
+                    to: [{ email: 'darevaloh1@miumg.edu.gt' }],
                     subject: `Nuevo caso de contacto: ${subject}`,
                 },
             ],
