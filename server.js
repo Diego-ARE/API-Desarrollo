@@ -11,34 +11,31 @@ app.use(bodyParser.json());
 
 app.post('/send-email', async (req, res) => {
     try {
-        const { name, email, subject, message } = req.body;
+        const { personalizations, from, content } = req.body;
+        console.log(JSON.stringify(body, null, 2));
 
         // Verifica que los datos requeridos estén presentes
-        if (!name || !email || !subject || !message) {
+        if (!personalizations || !from || !content) {
             return res.status(400).send({ message: 'Faltan datos requeridos' });
+        }
+
+        // Verifica que personalizations tenga al menos un destinatario
+        if (!personalizations[0].to || !personalizations[0].to[0].email) {
+            return res.status(400).send({ message: 'Faltan destinatarios' });
         }
 
         const emailData = {
             personalizations: [
                 {
-                    to: [{ email: 'darevaloh1@miumg.edu.gt' }],
-                    subject: `Nuevo caso de contacto: ${subject}`,
+                    to: personalizations[0].to,
+                    subject: personalizations[0].subject || 'Sin Asunto', // Usar un valor por defecto si no hay asunto
                 },
             ],
-            from: { 
-                email: email, 
-                name: name // Agregar el nombre del remitente aquí
+            from: {
+                email: from.email,
+                name: from.name || 'Remitente Desconocido', // Usar un valor por defecto si no hay nombre
             },
-            content: [
-                {
-                    type: 'text/plain',
-                    value: message, // Mensaje del contacto
-                },
-                {
-                    type: 'text/html', // Agrega un bloque de contenido en formato HTML (opcional)
-                    value: `<p>${message}</p>`
-                }
-            ],
+            content: content,
         };
 
         // Log para depuración
@@ -57,7 +54,6 @@ app.post('/send-email', async (req, res) => {
         res.status(500).send({ message: 'Error al enviar el correo', error: error.message });
     }
 });
-
 
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
